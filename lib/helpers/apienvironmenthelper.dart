@@ -19,7 +19,7 @@ List<APIEnvironment> environments = [
       baseUrl: "https://partygamesapitest.thedotnetguy.com"),
   APIEnvironment(
       environment: ApiEnvironmentsEnum.testlocalhost,
-      baseUrl: "localhost:5001"),
+      baseUrl: "http://localhost:5001"),
 ];
 
 String GetBaseUrl(ApiEnvironmentsEnum environment) {
