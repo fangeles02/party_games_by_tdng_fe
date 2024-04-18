@@ -3,6 +3,7 @@ import 'package:party_games_by_tdng/api/appsettings.dart';
 import 'package:party_games_by_tdng/helpers/gamedetailshelper.dart';
 import 'package:party_games_by_tdng/helpers/responsiveuihelper.dart';
 import 'package:signalr_core/signalr_core.dart';
+import 'package:animations/animations.dart';
 
 class GameMaker extends StatefulWidget {
   const GameMaker({super.key, required this.gameDetail, required this.heroTag});
@@ -15,6 +16,18 @@ class GameMaker extends StatefulWidget {
 }
 
 class _GameMakerState extends State<GameMaker> {
+  Function()? continuebuttonfunc;
+
+  int currentIndex = 0;
+
+  continueButton() async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (_) => Sample(
+                sampleData: "Hello Sample", initHubConnection: connection)));
+  }
+
   final connection = HubConnectionBuilder()
       .withUrl(
           baseUrl + SignalrConstants.hubOperations,
@@ -24,7 +37,17 @@ class _GameMakerState extends State<GameMaker> {
       .build();
 
   void initSignalR() async {
-    await connection.start();
+    try {
+      await connection.start();
+      setState(() {
+        continuebuttonfunc = continueButton;
+      });
+    } on Exception catch (data) {
+      print(data.toString());
+      setState(() {
+        continuebuttonfunc = null;
+      });
+    }
   }
 
   @override
@@ -45,9 +68,15 @@ class _GameMakerState extends State<GameMaker> {
                 ? 50
                 : 70);
 
-    return Scaffold(
-      appBar: AppBar(),
-      body: Column(
+    void onTapped(int index) {
+      setState(() {
+        currentIndex = index;
+        print(currentIndex);
+      });
+    }
+
+    List<Widget> pages = [
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Center(
@@ -72,20 +101,53 @@ class _GameMakerState extends State<GameMaker> {
                     textAlign: TextAlign.justify,
                   ),
                   TextButton(
-                      onPressed: () async {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => Sample(
-                                    sampleData: "Hello Sample",
-                                    initHubConnection: connection)));
-                      },
-                      child: const Text("Click me"))
+                    onPressed: continuebuttonfunc,
+                    child: const Text("Continue"),
+                  ),
                 ],
               ),
             ),
           )
         ],
+      ),
+      Container(
+        color: Colors.blue,
+      ),
+      Container(
+        color: Colors.red,
+      ),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(),
+      body: PageTransitionSwitcher(
+        transitionBuilder: (child, animation, secondaryAnimation) {
+          return FadeThroughTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            child: child,
+          );
+        },
+        child: pages.elementAt(currentIndex),
+      ),
+
+      //
+
+      // _NavigationDestinationView(
+      //       // Adding [UniqueKey] to make sure the widget rebuilds when transitioning.
+      //       key: UniqueKey(),
+      //       item: bottomNavigationBarItems[_currentIndex.value],
+      //     )
+
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+              icon: Icon(Icons.info), label: "Introduction"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setup"),
+          BottomNavigationBarItem(icon: Icon(Icons.gamepad), label: "Game")
+        ],
+        currentIndex: currentIndex,
+        onTap: onTapped,
       ),
     );
   }
@@ -94,6 +156,7 @@ class _GameMakerState extends State<GameMaker> {
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+    connection.stop();
   }
 }
 
