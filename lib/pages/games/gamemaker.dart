@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:party_games_by_tdng/api/api_constants.dart';
+import 'package:party_games_by_tdng/api/appsettings.dart';
 import 'package:party_games_by_tdng/helpers/gamedetailshelper.dart';
 import 'package:party_games_by_tdng/helpers/responsiveuihelper.dart';
 import 'package:signalr_core/signalr_core.dart';
@@ -18,7 +17,7 @@ class GameMaker extends StatefulWidget {
 class _GameMakerState extends State<GameMaker> {
   final connection = HubConnectionBuilder()
       .withUrl(
-          SignalrConstants.baseUrl + SignalrConstants.hubOperations,
+          baseUrl + SignalrConstants.hubOperations,
           HttpConnectionOptions(
             logging: (level, message) => print(message),
           ))
