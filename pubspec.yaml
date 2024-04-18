@@ -12,6 +12,7 @@ dependencies:
   signalr_core:
   http:
   shared_preferences:
+  animations:
 
 dev_dependencies:
   flutter_test:
