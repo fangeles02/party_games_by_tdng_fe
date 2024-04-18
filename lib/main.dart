@@ -2,8 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:party_games_by_tdng/pages/interface/mainmenu.dart';
 import 'package:party_games_by_tdng/pages/interface/username_nominate_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:io';
+
+
+ class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
+  }
+}
+
 
 void main() async {
+  HttpOverrides.global = MyHttpOverrides();
+
+
   WidgetsFlutterBinding.ensureInitialized();
   final SharedPreferences prefs = await SharedPreferences.getInstance();
 
