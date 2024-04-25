@@ -1,10 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:party_games_by_tdng/helpers/gamedetailshelper.dart';
 import 'package:party_games_by_tdng/helpers/responsiveuihelper.dart';
-import 'package:party_games_by_tdng/pages/games/gamemaker.dart';
+import 'package:party_games_by_tdng/pages/games/gamemaker/gamemaker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
@@ -37,11 +39,11 @@ class _MainMenuState extends State<MainMenu> {
     MediaQueryData mediaQueryData = MediaQuery.of(context);
 
     double globalLeftRightPadding =
-        responsiveUiHelper().isSmallScreen(mediaQueryData.size.width)
-            ? 20
-            : (responsiveUiHelper().isMediumScreen(mediaQueryData.size.width)
-                ? 50
-                : 70);
+        ResponsiveUiHelper().isSmallScreen(mediaQueryData.size.width)
+            ? smallScreenPadding
+            : (ResponsiveUiHelper().isMediumScreen(mediaQueryData.size.width)
+                ? mediumScreenPadding
+                : largeScreenPadding);
 
     return Scaffold(
       appBar: AppBar(),
@@ -69,8 +71,7 @@ class _MainMenuState extends State<MainMenu> {
               CustomCardButton(
                 heroTag: "b",
                 onClick: () {},
-                title: "Join",
-                subtitle: "Join an existing game",
+                game: Game.sample,
               ),
               const SizedBox(
                 height: 35,
@@ -90,18 +91,20 @@ class _MainMenuState extends State<MainMenu> {
                   CustomCardButton(
                     heroTag: "game_title_mafia",
                     onClick: () {
-                     Navigator.push(context, MaterialPageRoute(builder: (_) => GameMaker(
-                       heroTag: "game_title_mafia",
-                        gameDetail: gameSelector(Game.mafia),
-                      )));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => GameMaker(
+                                    heroTag: "game_title_mafia",
+                                    gameDetail: gameSelector(Game.mafia),
+                                  )));
                     },
-                    title: "Mafia",
-                    subtitle: "A Thrilling Social Deduction Game",
+                    game: Game.mafia,
                   ),
                   CustomCardButton(
                     heroTag: "a",
                     onClick: () {},
-                    title: "Draw me",
+                    game: Game.sample,
                   )
                 ],
               ),
@@ -118,49 +121,67 @@ class _MainMenuState extends State<MainMenu> {
 
 class CustomCardButton extends StatelessWidget {
   const CustomCardButton(
-      {super.key, required this.onClick, required this.title, this.subtitle, required this.heroTag});
+      {super.key,
+      required this.onClick,
+      required this.game,
+      required this.heroTag});
 
-  final String title;
-  final String? subtitle;
   final Function() onClick;
   final String heroTag;
+
+  final Game game;
+
+  GameDetails get gamedetails => gameSelector(game);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      splashColor: Theme.of(context).colorScheme.inversePrimary,
+      onTap: onClick,
+      splashColor: Theme.of(context).colorScheme.primaryContainer,
       customBorder:
           RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      onTap: onClick,
       child: Ink(
-        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-            color: Theme.of(context).colorScheme.primaryContainer),
+          color: Theme.of(context).colorScheme.inversePrimary,
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: SizedBox(
-          width: 150,
-          height: 100,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Hero(
-                tag: heroTag,
-                child: Text(
-                  title,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onPrimaryContainer,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
+          width: 170,
+          height: 120,
+          child: Stack(children: [
+            Hero(
+              tag: heroTag,
+              child: Ink(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: AssetImage(gamedetails.imageSource ?? ""))),
               ),
-              Text(
-                subtitle ?? "",
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimaryContainer),
+            ),
+            Container(
+              margin: const EdgeInsets.all(10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    gamedetails.gameTitle,
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    gamedetails.shortDescription,
+                    style: TextStyle(
+                        color:
+                            Theme.of(context).colorScheme.onPrimaryContainer),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ]),
         ),
       ),
     );

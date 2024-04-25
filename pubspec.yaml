@@ -13,6 +13,7 @@ dependencies:
   http:
   shared_preferences:
   animations:
+  google_fonts:
 
 dev_dependencies:
   flutter_test:
@@ -21,3 +22,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - images/

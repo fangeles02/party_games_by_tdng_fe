@@ -1,4 +1,4 @@
-class responsiveUiHelper {
+class ResponsiveUiHelper {
   bool isSmallScreen(double width) {
     if (width > 0 && width <= 768) {
       return true;
@@ -15,7 +15,7 @@ class responsiveUiHelper {
     }
   }
 
-   bool isLargeScreen(double width) {
+  bool isLargeScreen(double width) {
     if (width > 992) {
       return true;
     } else {
@@ -23,3 +23,7 @@ class responsiveUiHelper {
     }
   }
 }
+
+double smallScreenPadding = 20;
+double mediumScreenPadding = 50;
+double largeScreenPadding = 70;
