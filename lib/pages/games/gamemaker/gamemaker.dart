@@ -1,13 +1,8 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:party_games_by_tdng/api/appsettings.dart';
 import 'package:party_games_by_tdng/helpers/gamedetailshelper.dart';
+import 'package:party_games_by_tdng/helpers/hubmethodshelper.dart';
 import 'package:party_games_by_tdng/helpers/responsiveuihelper.dart';
 import 'package:party_games_by_tdng/helpers/signalrhelper.dart';
 import 'package:party_games_by_tdng/pages/interface/loaderscreen.dart';
@@ -58,6 +53,8 @@ class _GameMakerState extends State<GameMaker> {
       foregroundColor: MaterialStateProperty.all(Colors.white));
   //Color buttonCreateColor =
 
+  List<SignalrMember> playersList = List.empty(growable: true);
+
   creategameButton() async {
     if (gamecredskey.currentState!.validate()) {
       setState(() {
@@ -65,13 +62,15 @@ class _GameMakerState extends State<GameMaker> {
         buttonCreateText = "Creating game";
       });
 
-      await connection.invoke("CreateGroup", args: [
-        "token",
-        playerName,
-        gamenameinputcontroller.text,
-        passcodeinputcontroller.text,
-        widget.gameDetail.gameId
-      ]);
+      await connection.invoke(
+          getMethodDetails(SignalrEndpointsEnum.mafiaCreateGroup).methodName,
+          args: [
+            "token",
+            playerName,
+            gamenameinputcontroller.text,
+            passcodeinputcontroller.text,
+            widget.gameDetail.gameId
+          ]);
     }
   }
 
@@ -105,12 +104,14 @@ class _GameMakerState extends State<GameMaker> {
         buttonCreateFunctionOnClick = null;
       });
 
-      await connection.invoke("CloseGroup", args: [
-        "token",
-        gamenameinputcontroller.text,
-        passcodeinputcontroller.text,
-        widget.gameDetail.gameId
-      ]);
+      await connection.invoke(
+          getMethodDetails(SignalrEndpointsEnum.mafiaCloseGroup).methodName,
+          args: [
+            "token",
+            gamenameinputcontroller.text,
+            passcodeinputcontroller.text,
+            widget.gameDetail.gameId
+          ]);
     }
   }
 
@@ -158,7 +159,9 @@ class _GameMakerState extends State<GameMaker> {
         print("The connection has been forcedly closed charing");
       });
 
-      connection.on('CreateGroupResponse', (message) {
+      connection.on(
+          getMethodDetails(SignalrEndpointsEnum.mafiaCreateGroup)
+              .returnMethodName, (message) {
         SignalrResponse response =
             deserializeSignalrResponse(message.toString());
 
@@ -190,7 +193,9 @@ class _GameMakerState extends State<GameMaker> {
         }
       });
 
-      connection.on("CloseGroupResponse", (message) {
+      connection.on(
+          getMethodDetails(SignalrEndpointsEnum.mafiaCloseGroup)
+              .returnMethodName, (message) {
         SignalrResponse response =
             deserializeSignalrResponse(message.toString());
 
@@ -459,7 +464,7 @@ class _GameMakerState extends State<GameMaker> {
                       height: 10,
                     ),
                     SizedBox(
-                      height: 50,
+                      height: defaultButtonHeight,
                       child: ElevatedButton(
                         onPressed: buttonCreateFunctionOnClick,
                         style: buttonCreateStyle,
@@ -475,64 +480,131 @@ class _GameMakerState extends State<GameMaker> {
       ),
       Container(
         key: const ValueKey<int>(2),
-        color: Colors.red,
+        child: ListView.builder(
+            itemCount: 5,
+            itemBuilder: (BuildContext context, int index) {
+              return ListTile(
+                title: Text("Item $index"),
+              );
+            }),
       ),
-      Container(
+      //page 4 (page 2 of connected state)
+      Column(
         key: const ValueKey<int>(3),
-        padding: EdgeInsets.fromLTRB(
-            globalLeftRightPadding, 0, globalLeftRightPadding, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SafeArea(child: Container()),
-            const Text(
-              "Configure your game",
-              style: TextStyle(fontSize: 18),
-            ),
-            const Text(
-                "Please provide your co-players this game ID and passcode"),
-            const SizedBox(
-              height: 20,
-            ),
-            Expanded(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text("Game ID:"),
-                          Text(
-                            gamenameinputcontroller.text,
-                            style: const TextStyle(fontSize: 20),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          SafeArea(child: Container()),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+                globalLeftRightPadding, 0, globalLeftRightPadding, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Configure your game",
+                  style: TextStyle(fontSize: 18),
+                ),
+                const Text(
+                    "Please provide your co-players this game ID and passcode"),
+                const SizedBox(
+                  height: 20,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Game ID:"),
+                            Text(
+                              gamenameinputcontroller.text,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            const Text("Passcode:"),
+                            Text(
+                              passcodeinputcontroller.text,
+                              style: const TextStyle(fontSize: 20),
+                            )
+                          ],
+                        ),
+                        SizedBox(
+                          height: defaultButtonHeight,
+                          child: ElevatedButton(
+                            onPressed: buttonCreateFunctionOnClick,
+                            style: buttonCreateStyle,
+                            child: const Icon(Icons.stop),
                           ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          const Text("Passcode:"),
-                          Text(
-                            passcodeinputcontroller.text,
-                            style: const TextStyle(fontSize: 20),
-                          )
-                        ],
-                      ),
-                      SizedBox(
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 15,
+                ),
+                const Text("Members"),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              child: ListView.separated(
+                  separatorBuilder: (context, index) => Divider(),
+                  shrinkWrap: true,
+                  itemCount: playersList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.grey, shape: BoxShape.circle),
+                        width: 50,
                         height: 50,
-                        child: ElevatedButton(
-                          onPressed: buttonCreateFunctionOnClick,
-                          style: buttonCreateStyle,
-                          child: const Icon(Icons.stop),
+                        child: const Icon(
+                          Icons.person,
+                          color: Colors.white,
                         ),
                       ),
-                    ],
-                  )
-                ],
-              ),
+                      title: Text(playersList[index].playerName),
+                      subtitle: Text(playersList[index].connectionId),
+                      trailing: SizedBox(
+                        width: 50,
+                        height: 50,
+                        child: ListViewRemoveButton(
+                          onButtonTapped: () {
+                            var playerdata = playersList[index];
+                            setState(() {
+                              playersList.removeAt(index);
+                            });
+                          },
+                        ),
+                      ),
+                    );
+                  }),
             ),
-          ],
-        ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+                globalLeftRightPadding, 20, globalLeftRightPadding, 20),
+            child: SizedBox(
+              height: 40,
+              child: ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      playersList!.add(SignalrMember(
+                          playerName: "Sample player", connectionId: "12345"));
+                    });
+                  },
+                  child: const Text("data")),
+            ),
+          )
+        ],
       )
     ];
 
@@ -581,12 +653,16 @@ class _GameMakerState extends State<GameMaker> {
                                             "Attempting to end current game",
                                       ));
 
-                              await connection.invoke("CloseGroup", args: [
-                                "token",
-                                gamenameinputcontroller.text,
-                                passcodeinputcontroller.text,
-                                widget.gameDetail.gameId
-                              ]);
+                              await connection.invoke(
+                                  getMethodDetails(
+                                          SignalrEndpointsEnum.mafiaCloseGroup)
+                                      .methodName,
+                                  args: [
+                                    "token",
+                                    gamenameinputcontroller.text,
+                                    passcodeinputcontroller.text,
+                                    widget.gameDetail.gameId
+                                  ]);
                             },
                             child: const Text("Yes")),
                       ],
@@ -634,5 +710,21 @@ class _GameMakerState extends State<GameMaker> {
     // TODO: implement dispose
     super.dispose();
     await connection.stop();
+  }
+}
+
+class ListViewRemoveButton extends StatelessWidget {
+  const ListViewRemoveButton({super.key, required this.onButtonTapped});
+
+  final Function() onButtonTapped;
+
+  @override
+  Widget build(BuildContext context) {
+    return RawMaterialButton(
+      fillColor: Colors.orange[100],
+      onPressed: onButtonTapped,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+      child: const Icon(Icons.exit_to_app),
+    );
   }
 }
