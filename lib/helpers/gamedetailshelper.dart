@@ -4,19 +4,25 @@ class GameDetails {
       required this.gameDescription,
       required this.shortDescription,
       required this.game,
-      this.imageSource});
+      required this.imageSource});
 
   final String gameTitle;
   final String gameDescription;
   final String shortDescription;
-  final String? imageSource;
+  final String imageSource;
   final Game game;
   String get gameId => game.toString();
 }
 
-enum Game { mafia, sample }
+enum Game { joingame, mafia, sample }
 
 List<GameDetails> gamesList = [
+  GameDetails(
+      gameTitle: "Join",
+      shortDescription: "Join an existing game",
+      gameDescription: "The quick brown fox jumps over the lazy dog",
+      game: Game.joingame,
+      imageSource: "images/defaultimage.jpeg"),
   GameDetails(
       gameTitle: "Mafia",
       shortDescription: "A Thrilling Social Deduction Game",
@@ -25,11 +31,11 @@ List<GameDetails> gamesList = [
       game: Game.mafia,
       imageSource: "images/mafiaimg.jpg"),
   GameDetails(
-    gameTitle: "Sample",
-    shortDescription: "This is just a sample",
-    gameDescription: "The quick brown fox jumps over the lazy dog",
-    game: Game.sample,
-  ),
+      gameTitle: "Sample",
+      shortDescription: "This is just a sample",
+      gameDescription: "The quick brown fox jumps over the lazy dog",
+      game: Game.sample,
+      imageSource: "images/defaultimage.jpeg"),
 ];
 
 GameDetails gameSelector(Game game) {

@@ -27,3 +27,5 @@ class ResponsiveUiHelper {
 double smallScreenPadding = 20;
 double mediumScreenPadding = 50;
 double largeScreenPadding = 70;
+
+double defaultButtonHeight = 40;
