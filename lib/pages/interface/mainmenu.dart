@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart';
 import 'package:party_games_by_tdng/helpers/gamedetailshelper.dart';
 import 'package:party_games_by_tdng/helpers/responsiveuihelper.dart';
 import 'package:party_games_by_tdng/pages/games/gamemaker/gamemaker.dart';
+import 'package:party_games_by_tdng/pages/games/joiner/joinagame.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainMenu extends StatefulWidget {
@@ -70,8 +71,11 @@ class _MainMenuState extends State<MainMenu> {
               ),
               CustomCardButton(
                 heroTag: "b",
-                onClick: () {},
-                game: Game.sample,
+                onClick: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (_) => JoinGame()));
+                },
+                game: Game.joingame,
               ),
               const SizedBox(
                 height: 35,
@@ -159,6 +163,11 @@ class CustomCardButton extends StatelessWidget {
                         image: AssetImage(gamedetails.imageSource ?? ""))),
               ),
             ),
+            Ink(
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: Color.fromARGB(65, 0, 0, 0)),
+            ),
             Container(
               margin: const EdgeInsets.all(10),
               child: Column(
@@ -167,16 +176,17 @@ class CustomCardButton extends StatelessWidget {
                 children: [
                   Text(
                     gamedetails.gameTitle,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    style: const TextStyle(
+                        //color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
                     gamedetails.shortDescription,
-                    style: TextStyle(
-                        color:
-                            Theme.of(context).colorScheme.onPrimaryContainer),
+                    style: const TextStyle(
+                        //color: Theme.of(context).colorScheme.onPrimaryContainer
+                        color: Colors.white),
                   ),
                 ],
               ),
