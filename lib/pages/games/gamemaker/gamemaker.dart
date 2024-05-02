@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:party_games_by_tdng/api/appsettings.dart';
 import 'package:party_games_by_tdng/helpers/gamedetailshelper.dart';
 import 'package:party_games_by_tdng/helpers/hubmethodshelper.dart';
+import 'package:party_games_by_tdng/helpers/jwttokenhelper.dart';
 import 'package:party_games_by_tdng/helpers/responsiveuihelper.dart';
 import 'package:party_games_by_tdng/helpers/signalrhelper.dart';
 import 'package:party_games_by_tdng/pages/interface/loaderscreen.dart';
@@ -65,7 +66,7 @@ class _GameMakerState extends State<GameMaker> {
       await connection.invoke(
           getMethodDetails(SignalrEndpointsEnum.mafiaCreateGroup).methodName,
           args: [
-            "token",
+            generateJwtToken(),
             playerName,
             gamenameinputcontroller.text,
             passcodeinputcontroller.text,
@@ -107,7 +108,7 @@ class _GameMakerState extends State<GameMaker> {
       await connection.invoke(
           getMethodDetails(SignalrEndpointsEnum.mafiaCloseGroup).methodName,
           args: [
-            "token",
+            generateJwtToken(),
             gamenameinputcontroller.text,
             passcodeinputcontroller.text,
             widget.gameDetail.gameId
@@ -658,7 +659,7 @@ class _GameMakerState extends State<GameMaker> {
                                           SignalrEndpointsEnum.mafiaCloseGroup)
                                       .methodName,
                                   args: [
-                                    "token",
+                                    generateJwtToken(),
                                     gamenameinputcontroller.text,
                                     passcodeinputcontroller.text,
                                     widget.gameDetail.gameId
