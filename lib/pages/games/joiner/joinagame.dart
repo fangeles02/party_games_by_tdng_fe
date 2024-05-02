@@ -36,11 +36,6 @@ class _JoinGameState extends State<JoinGame> {
   String? gameCode;
   String? gameOwner;
 
-  onJoinTappedTest() {
-    var res = generateJwtToken();
-    print(res);
-  }
-
   onJoinTapped() async {
     setState(() {
       joinButtonFunc = null;
@@ -90,7 +85,7 @@ class _JoinGameState extends State<JoinGame> {
   }
 
   void initialize() {
-    joinButtonFunc = onJoinTappedTest;
+    joinButtonFunc = onJoinTapped;
   }
 
   @override
