@@ -47,8 +47,8 @@ class _JoinGameState extends State<JoinGame> {
       joinButtonText = "Checking game";
     });
 
-    var res = await GameAdapter.checkGameInfo(CheckGameInfoRequest(
-        gameId: groupname.text, passcode: passcode.text, token: ""));
+    var res = await GameAdapter.checkGameInfo(
+        CheckGameInfoRequest(gameId: groupname.text, passcode: passcode.text));
 
     if (res.resultCode == "OK") {
       gameID = res.roomName;
