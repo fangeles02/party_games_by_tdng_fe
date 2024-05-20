@@ -64,7 +64,7 @@ class _GameMakerState extends State<GameMaker> {
       });
 
       await connection.invoke(
-          getMethodDetails(SignalrEndpointsEnum.mafiaCreateGroup).methodName,
+          getMethodDetails(SignalrEndpointsEnum.groupOpsCreateGroup).methodName,
           args: [
             generateJwtToken(),
             playerName,
@@ -106,7 +106,7 @@ class _GameMakerState extends State<GameMaker> {
       });
 
       await connection.invoke(
-          getMethodDetails(SignalrEndpointsEnum.mafiaCloseGroup).methodName,
+          getMethodDetails(SignalrEndpointsEnum.groupOpsCloseGroup).methodName,
           args: [
             generateJwtToken(),
             gamenameinputcontroller.text,
@@ -161,7 +161,7 @@ class _GameMakerState extends State<GameMaker> {
       });
 
       connection.on(
-          getMethodDetails(SignalrEndpointsEnum.mafiaCreateGroup)
+          getMethodDetails(SignalrEndpointsEnum.groupOpsCreateGroup)
               .returnMethodName, (message) {
         SignalrResponse response =
             deserializeSignalrResponse(message.toString());
@@ -195,7 +195,7 @@ class _GameMakerState extends State<GameMaker> {
       });
 
       connection.on(
-          getMethodDetails(SignalrEndpointsEnum.mafiaCloseGroup)
+          getMethodDetails(SignalrEndpointsEnum.groupOpsCloseGroup)
               .returnMethodName, (message) {
         SignalrResponse response =
             deserializeSignalrResponse(message.toString());
@@ -655,8 +655,8 @@ class _GameMakerState extends State<GameMaker> {
                                       ));
 
                               await connection.invoke(
-                                  getMethodDetails(
-                                          SignalrEndpointsEnum.mafiaCloseGroup)
+                                  getMethodDetails(SignalrEndpointsEnum
+                                          .groupOpsCloseGroup)
                                       .methodName,
                                   args: [
                                     generateJwtToken(),

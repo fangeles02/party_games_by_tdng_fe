@@ -1,6 +1,12 @@
 enum SignalrResponseEnum { success, failed }
 
-enum SignalrEndpointsEnum { mafiaCreateGroup, mafiaCloseGroup, mafiaJoinGame }
+enum SignalrEndpointsEnum {
+  groupOpsCreateGroup,
+  groupOpsCloseGroup,
+  groupOpsKickMemberOut,
+  groupOpsJoinGroup,
+  groupOpsMemberLeavesGroup
+}
 
 class SignalrResponse {
   SignalrResponse(

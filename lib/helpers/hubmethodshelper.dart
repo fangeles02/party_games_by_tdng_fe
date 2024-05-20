@@ -2,17 +2,25 @@ import 'package:party_games_by_tdng/helpers/signalrhelper.dart';
 
 List<SignalrMethods> hubMethods = [
   SignalrMethods(
-      endpointEnum: SignalrEndpointsEnum.mafiaCreateGroup,
+      endpointEnum: SignalrEndpointsEnum.groupOpsCreateGroup,
       methodName: "CreateGroup",
       returnMethodName: "CreateGroupResponse"),
   SignalrMethods(
-      endpointEnum: SignalrEndpointsEnum.mafiaCloseGroup,
+      endpointEnum: SignalrEndpointsEnum.groupOpsCloseGroup,
       methodName: "CloseGroup",
       returnMethodName: "CloseGroupResponse"),
   SignalrMethods(
-      endpointEnum: SignalrEndpointsEnum.mafiaJoinGame,
-      methodName: "JoinGame",
-      returnMethodName: "JoinGameResponse"),
+      endpointEnum: SignalrEndpointsEnum.groupOpsKickMemberOut,
+      methodName: "KickMemberOut",
+      returnMethodName: "KickMemberOutResponse"),
+  SignalrMethods(
+      endpointEnum: SignalrEndpointsEnum.groupOpsJoinGroup,
+      methodName: "JoinGroup",
+      returnMethodName: "JoinGroupResponse"),
+  SignalrMethods(
+      endpointEnum: SignalrEndpointsEnum.groupOpsMemberLeavesGroup,
+      methodName: "MemberLeavesGroup",
+      returnMethodName: "MemberLeavesGroupResponse"),
 ];
 
 SignalrMethods getMethodDetails(SignalrEndpointsEnum endpoint) {
