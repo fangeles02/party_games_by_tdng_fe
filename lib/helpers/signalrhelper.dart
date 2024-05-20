@@ -1,5 +1,7 @@
 enum SignalrResponseEnum { success, failed }
 
+enum SignalrRecipient { self, group }
+
 enum SignalrEndpointsEnum {
   groupOpsCreateGroup,
   groupOpsCloseGroup,
@@ -10,11 +12,13 @@ enum SignalrEndpointsEnum {
 
 class SignalrResponse {
   SignalrResponse(
-      {required this.resultCode,
+      {required this.recipient,
+      required this.resultCode,
       this.resultTitle,
       required this.resultMessage,
       this.responseParams});
 
+  final SignalrRecipient recipient;
   final String resultCode;
   final String? resultTitle;
   final String resultMessage;
@@ -30,10 +34,12 @@ SignalrResponse deserializeSignalrResponse(String rawMessage) {
   List<String> splitted = fixed.split('~');
 
   return SignalrResponse(
-    resultCode: splitted[0],
-    resultTitle: splitted[1],
-    resultMessage: splitted[2],
-    responseParams: splitted[3],
+    recipient:
+        splitted[0] == "Self" ? SignalrRecipient.self : SignalrRecipient.group,
+    resultCode: splitted[1],
+    resultTitle: splitted[2],
+    resultMessage: splitted[3],
+    responseParams: splitted[4],
   );
 }
 
